@@ -42,6 +42,7 @@ select owner,object_name,object_type from dba_objects where status='INVALID' and
 PROMPT DST VERSION
 PROMPT =======================
 col version format 99999
+col value format a20
 SELECT PROPERTY_NAME, SUBSTR(property_value, 1, 30) value
 FROM DATABASE_PROPERTIES
 WHERE PROPERTY_NAME LIKE 'DST_%'
