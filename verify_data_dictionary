@@ -1,0 +1,49 @@
+set pages 1000
+set lines 200
+col owner format a30
+col object_name format a30
+col object_type format a30
+col comp_id format a20
+col comp_name format a40
+col version format a15
+col status format a15
+col dbname format a15
+col ACTION_TIME format a30
+col id format a10
+col COMMENTS format a60
+col action form a30
+col description form a85
+col action_date form a20
+col PROPERTY_NAME format a60
+
+PROMPT DATABASE NAME
+PROMPT =============
+select sys_context('USERENV','DB_NAME') DBNAME from dual;
+PROMPT DBA_REGISTRY CONTENTS
+PROMPT ================================================================
+select comp_id,comp_name,version,status from dba_registry;
+PROMPT LIST APPLIED PATCHES
+PROMPT =======================
+select substr(action_time,1,30) action_time,substr(id,1,10) id,substr(action,1,10) action,substr(version,1,8) version,substr(BUNDLE_SERIES,1,6) bundle,substr(comments,1,20) comments
+from registry$history;
+PROMPT LIST APPLIED SQL PATCHES
+PROMPT =======================
+select description, action, to_char(action_time,'DD/MM/RR HH24:MI:SS') action_date, ' ' version
+from dba_registry_sqlpatch;
+PROMPT COUNT OF INVALID OBJECTS
+PROMPT ========================
+select count(*) from dba_objects where status='INVALID' and owner in ('SYS','SYSTEM');
+PROMPT INVALID OBJECTS GROUPED BY OBJECT TYPE AND OWNER
+PROMPT ================================================
+select owner,object_type,count(*) from dba_objects where status='INVALID' and owner in ('SYS','SYSTEM') group by owner,object_type;
+PROMPT LIST OF SYS INVALID OBJECTS
+PROMPT =======================
+select owner,object_name,object_type from dba_objects where status='INVALID' and owner in ('SYS','SYSTEM');
+PROMPT DST VERSION
+PROMPT =======================
+col version format 99999
+SELECT PROPERTY_NAME, SUBSTR(property_value, 1, 30) value
+FROM DATABASE_PROPERTIES
+WHERE PROPERTY_NAME LIKE 'DST_%'
+ORDER BY PROPERTY_NAME;
+SELECT * FROM v$timezone_file;
